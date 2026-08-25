@@ -1,0 +1,146 @@
+# @package _global_
+
+defaults:
+  - _self_
+
+# InteriorGS single-view navigation data. The loader uniformly samples a
+# visible-history 33-frame clip over [0 ... t], then reads a 33-frame target
+# clip [t ... t+32]. The transform exposes them as past_images and images.
+# Actions remain the 32 target frame-to-frame deltas.
+# action_horizon is per block. With 4 blocks, total actions = 8 * 4 = 32:
+#   num_frames=33 action_horizon=8 max_chunk_size=4
+#   num_frame_per_block=2 num_action_per_block=8 num_state_per_block=1
+
+image_resolution_width: 320
+image_resolution_height: 160
+
+num_frames: 33
+state_horizon: 4
+action_horizon: 8
+num_frame_per_block: 2
+num_action_per_block: 8
+num_state_per_block: 1
+vae_temporal_stride: 4
+
+max_state_dim: 64
+max_action_dim: 32
+max_chunk_size: 4
+video_frame_stride: 1
+action_frame_stride: ${video_frame_stride}
+history_sampling: uniform
+
+interiorgs_data_root: ???
+
+modality_config_interiorgs:
+  video:
+    _target_: gammanav.vln.data.dataset.ModalityConfig
+    delta_indices: []
+    eval_delta_indices: [0]
+    modality_keys:
+      - video.rgb
+  state:
+    _target_: gammanav.vln.data.dataset.ModalityConfig
+    delta_indices: []
+    modality_keys:
+      - state.nav_pose
+  action:
+    _target_: gammanav.vln.data.dataset.ModalityConfig
+    delta_indices: []
+    modality_keys:
+      - action.nav_delta
+  language:
+    _target_: gammanav.vln.data.dataset.ModalityConfig
+    delta_indices: [0]
+    modality_keys:
+      - annotation.language.language_instruction
+
+transform_interiorgs:
+  _target_: gammanav.vln.data.transform.ComposedModalityTransform
+  transforms:
+    - _target_: gammanav.vln.data.transform.VideoToTensor
+      apply_to: ${modality_config_interiorgs.video.modality_keys}
+    - _target_: gammanav.vln.data.transform.VideoCrop
+      apply_to: ${modality_config_interiorgs.video.modality_keys}
+      scale: 0.95
+      mode: random
+    - _target_: gammanav.vln.data.transform.VideoResize
+      apply_to: ${modality_config_interiorgs.video.modality_keys}
+      height: ${image_resolution_height}
+      width: ${image_resolution_width}
+      interpolation: linear
+    - _target_: gammanav.vln.data.transform.VideoColorJitter
+      apply_to: ${modality_config_interiorgs.video.modality_keys}
+      brightness: 0.3
+      contrast: 0.4
+      saturation: 0.5
+      hue: 0.08
+    - _target_: gammanav.vln.data.transform.VideoToNumpy
+      apply_to: ${modality_config_interiorgs.video.modality_keys}
+
+    - _target_: gammanav.vln.data.transform.StateActionToTensor
+      apply_to: ${modality_config_interiorgs.state.modality_keys}
+    - _target_: gammanav.vln.data.transform.StateActionTransform
+      apply_to: ${modality_config_interiorgs.state.modality_keys}
+      normalization_modes:
+        state.nav_pose: q99
+
+    - _target_: gammanav.vln.data.transform.StateActionToTensor
+      apply_to: ${modality_config_interiorgs.action.modality_keys}
+    - _target_: gammanav.vln.data.transform.StateActionTransform
+      apply_to: ${modality_config_interiorgs.action.modality_keys}
+      normalization_modes:
+        action.nav_delta: q99
+
+    - _target_: gammanav.vln.data.transform.ConcatTransform
+      video_concat_order: ${modality_config_interiorgs.video.modality_keys}
+      state_concat_order: ${modality_config_interiorgs.state.modality_keys}
+      action_concat_order: ${modality_config_interiorgs.action.modality_keys}
+
+    - ${model_specific_transform}
+
+modality_configs:
+  interiorgs: ${modality_config_interiorgs}
+
+transforms:
+  interiorgs: ${transform_interiorgs}
+
+mixture_dataset_cls: gammanav.vln.data.dataset.lerobot.LeRobotMixtureDataset.from_mixture_spec
+single_dataset_cls: gammanav.vln.data.dataset.lerobot_sharded.ShardedLeRobotSingleActionChunkDatasetInteriorGS
+
+train_dataset:
+  _target_: ${mixture_dataset_cls}
+  _convert_: object
+  mixture_spec:
+    - dataset_path:
+        interiorgs:
+          - ${interiorgs_data_root}
+      dataset_weight: 1.0
+      distribute_weights: true
+
+  dataset_class: ${single_dataset_cls}
+  all_modality_configs: ${modality_configs}
+  all_transforms: ${transforms}
+  dataset_kwargs:
+    max_chunk_size: ${max_chunk_size}
+    num_frames: ${num_frames}
+    action_horizon: ${action_horizon}
+    state_horizon: ${state_horizon}
+    num_frame_per_block: ${num_frame_per_block}
+    num_action_per_block: ${num_action_per_block}
+    num_state_per_block: ${num_state_per_block}
+    vae_temporal_stride: ${vae_temporal_stride}
+    video_frame_stride: ${video_frame_stride}
+    action_frame_stride: ${action_frame_stride}
+    history_sampling: ${history_sampling}
+    nav_action_scale: 4.0
+    nav_smooth_window: 7
+    nav_smooth_passes: 2
+    compute_statistics: true
+    max_stats_episodes: 512
+    stats_start_stride: 16
+  mixture_kwargs:
+    training: true
+    balance_dataset_weights: false
+    balance_trajectory_weights: true
+    seed: 42
+    allow_padding_at_end: true

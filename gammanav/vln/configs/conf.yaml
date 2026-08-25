@@ -1,0 +1,109 @@
+defaults:
+  - _self_  # all below configs will override this conf.yaml
+  - model: wnm_3d/wnm_3d
+  - data: wnm_3d/interiorgs_wan22
+  - override hydra/hydra_logging: disabled  # disable hydra logging
+  - override hydra/job_logging: disabled  # disable hydra job logging
+
+
+# === Model Arguments ===
+model: ???
+
+# === Data Arguments ===
+train_dataset: ???
+
+# ======== Trainer ========
+trainer:
+  _target_: gammanav.vln.experiment.VLNTrainer
+  _partial_: true
+  _recursive_: false
+  callbacks:
+  model: ???                                  # model
+  train_dataset: ???                          # train_dataset
+  compute_dtype: ???                          # dtype_from_string(model.config.model_dtype)
+
+# === Training Arguments ===
+
+wandb_project: ???  # needs to be specified by user
+output_dir: ???  # need to be specified by user
+load_from_yaml:  # need to be specified by user, will override the current config
+remove_unused_columns: false
+bf16: false
+tf32: false
+global_batch_size: null
+raise_error_if_global_batch_size_not_set: false
+per_device_train_batch_size: 256
+per_device_eval_batch_size: 64
+gradient_accumulation_steps: 1
+dataloader_num_workers: 10
+dataloader_pin_memory: true
+dataloader_persistent_workers: true
+optim: adamw_torch
+learning_rate: 1e-4
+adam_beta1: 0.95
+adam_beta2: 0.999
+adam_epsilon: 1e-8
+weight_decay: 1e-6
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+logging_steps: 10.0
+num_train_epochs: 1000
+max_steps: -1
+save_strategy: steps
+save_steps: 500
+eval_strategy: "no"  # there has to be a double quote; otherwise a bare `no` will be interpreted as False
+save_total_limit: 8
+report_to: wandb
+seed: 42
+do_eval: false
+gradient_checkpointing: false
+ddp_find_unused_parameters: false
+ddp_bucket_cap_mb: 100
+eval_bf16: true
+torch_compile_mode: null
+
+pretrained_model_path: null
+
+save_lora_only: false
+
+training_args:
+  _target_: transformers.TrainingArguments
+  output_dir: ${output_dir}
+  run_name: ???                                # training_args.output_dir.split("/")[-1]
+  remove_unused_columns: ${remove_unused_columns}
+  deepspeed: ""
+  gradient_checkpointing: ${gradient_checkpointing}
+  bf16: ${bf16}
+  tf32: ${tf32}
+  per_device_train_batch_size: ${per_device_train_batch_size}
+  per_device_eval_batch_size: ${per_device_eval_batch_size}
+  gradient_accumulation_steps: ${gradient_accumulation_steps}
+  dataloader_num_workers: ${dataloader_num_workers}
+  dataloader_pin_memory: ${dataloader_pin_memory}
+  dataloader_persistent_workers: ${dataloader_persistent_workers}
+  optim: ${optim}
+  adam_beta1: ${adam_beta1}
+  adam_beta2: ${adam_beta2}
+  adam_epsilon: ${adam_epsilon}
+  learning_rate: ${learning_rate}
+  weight_decay: ${weight_decay}
+  warmup_ratio: ${warmup_ratio}
+  lr_scheduler_type: ${lr_scheduler_type}
+  logging_steps: ${logging_steps}
+  num_train_epochs: ${num_train_epochs}
+  max_steps: ${max_steps}
+  save_strategy: ${save_strategy}
+  save_steps: ${save_steps}
+  save_total_limit: ${save_total_limit}
+  report_to: ${report_to}
+  seed: ${seed}
+  do_eval: ${do_eval}
+  ddp_find_unused_parameters: ${ddp_find_unused_parameters}
+  ddp_bucket_cap_mb: ${ddp_bucket_cap_mb}
+  torch_compile_mode: ${torch_compile_mode}
+
+# === Disable Hydra Config ===
+hydra:
+  output_subdir: null
+  run:
+    dir: .

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+
+# Environments and editors
+.venv/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+.codex-home
+
+# Local data, weights, and experiment outputs
+/checkpoints
+/data
+/outputs/
+/logs/
+/runs/
+/wandb/
+*.log
+tmp
+
+# Profiling and generated media
+*.npz
+/recordings/
+/video_pred_output*/

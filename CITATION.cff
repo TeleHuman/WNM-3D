@@ -1,0 +1,60 @@
+cff-version: 1.2.0
+message: "If you use WNM-3D in your research, please cite the accompanying paper."
+title: "WNM-3D"
+type: software
+version: 1.0.0
+repository-code: "https://github.com/TeleHuman/WNM-3D"
+url: "https://wnm-3d.github.io/"
+authors:
+  - family-names: Huang
+    given-names: Yuehao
+  - family-names: Wu
+    given-names: Yunzi
+  - family-names: Zhang
+    given-names: Xiaotao
+  - family-names: Li
+    given-names: Xinhai
+  - family-names: Dong
+    given-names: Jiankun
+  - family-names: Lv
+    given-names: Jiajun
+  - family-names: Zhang
+    given-names: Chi
+  - family-names: Bai
+    given-names: Chenjia
+  - family-names: Liu
+    given-names: Yong
+  - family-names: Li
+    given-names: Xuelong
+keywords:
+  - vision-language navigation
+  - world models
+  - embodied AI
+  - 3D scene conditioning
+preferred-citation:
+  type: article
+  title: "WNM-3D: A World Navigation Model with 3D Scene Conditioning for Closed-Loop VLN"
+  authors:
+    - family-names: Huang
+      given-names: Yuehao
+    - family-names: Wu
+      given-names: Yunzi
+    - family-names: Zhang
+      given-names: Xiaotao
+    - family-names: Li
+      given-names: Xinhai
+    - family-names: Dong
+      given-names: Jiankun
+    - family-names: Lv
+      given-names: Jiajun
+    - family-names: Zhang
+      given-names: Chi
+    - family-names: Bai
+      given-names: Chenjia
+    - family-names: Liu
+      given-names: Yong
+    - family-names: Li
+      given-names: Xuelong
+  year: 2026
+  doi: "10.48550/arXiv.2608.07267"
+  url: "https://arxiv.org/abs/2608.07267"

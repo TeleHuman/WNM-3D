@@ -3,13 +3,13 @@
 <img src="assets/wnm_3d.webp" alt="WNM-3D teaser" width="92%">
 
 <p>
-  <a href="https://wnm-3d.github.io/"><img src="assets/badges/project.svg" alt="WNM-3D project page"></a>
-  <a href="https://arxiv.org/abs/2608.07267"><img src="assets/badges/paper.svg" alt="WNM-3D paper on arXiv"></a>
-  <!-- <a href="https://huggingface.co/TeleEmbodied/WNM-3D"><img src="assets/badges/model.svg" alt="WNM-3D model checkpoint"></a> -->
-  <a href="https://huggingface.co/datasets/TeleEmbodied/GN-Matrix"><img src="assets/badges/dataset.svg" alt="GN-Matrix dataset"></a>
-  <a href="https://github.com/TeleHuman/GN0"><img src="assets/badges/bench.svg" alt="GN-Bench"></a>
-  <a href="https://github.com/TeleHuman/WNM-3D-RL"><img src="assets/badges/rl.svg" alt="WNM-3D Stage III reinforcement learning"></a>
-  <a href="assets/wechat.jpg"><img src="assets/badges/wechat.svg" alt="WNM-3D WeChat group"></a>
+  <a href="https://wnm-3d.github.io/"><img src="assets/badges/project.svg" alt="WNM-3D project page" width="115"></a>
+  <a href="https://arxiv.org/abs/2608.07267"><img src="assets/badges/paper.svg" alt="WNM-3D paper on arXiv" width="115"></a>
+  <a href="https://huggingface.co/TeleEmbodied/WNM-3D"><img src="assets/badges/model.svg" alt="WNM-3D model checkpoints" width="115"></a>
+  <a href="https://huggingface.co/datasets/TeleEmbodied/GN-Matrix"><img src="assets/badges/dataset.svg" alt="GN-Matrix dataset" width="115"></a>
+  <a href="https://github.com/TeleHuman/GN0"><img src="assets/badges/bench.svg" alt="GN-Bench" width="115"></a>
+  <a href="https://github.com/TeleHuman/WNM-3D-RL"><img src="assets/badges/rl.svg" alt="WNM-3D Stage III reinforcement learning" width="115"></a>
+  <a href="assets/wechat.jpg"><img src="assets/badges/wechat.svg" alt="WNM-3D WeChat group" width="115"></a>
 </p>
 
 </div>
@@ -59,6 +59,7 @@ and navigation-action generation in a block-causal world-action model.
 - [🔗 Citation](#-citation)
 - [👏 Acknowledgements](#-acknowledgements)
 - [📄 License](#-license)
+- [📬 Contact](#-contact)
 
 ## 📚 Installation
 
@@ -243,3 +244,17 @@ and the [DINOv3 License](LICENSES/DINOV3_LICENSE.md).
 Component-level attribution and license boundaries are documented in
 [Third-Party Notices](docs/THIRD_PARTY_NOTICES.md). Model weights and datasets
 are also subject to the terms published by their respective providers.
+
+## 📬 Contact
+
+Questions, suggestions, and bug reports are welcome through GitHub issues and
+discussions.
+
+For research collaborations or other inquiries, contact Yuehao Huang at
+**yuehaohuang@zju.edu.cn**.
+
+Scan the QR code below to join the WNM-3D community on WeChat:
+
+<p align="center">
+  <img src="assets/wechat.jpg" alt="WNM-3D WeChat discussion group" width="36%"/>
+</p>

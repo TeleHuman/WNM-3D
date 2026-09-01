@@ -25,6 +25,10 @@ from .lerobot import (
 cv2.setNumThreads(0)
 
 
+ACTION_STATISTICS_VERSION = 2
+ACTION_STATISTICS_SCOPE = "eligible_step_filter_full_action_windows"
+
+
 class ShardedLeRobotSingleActionChunkDatasetInteriorGS(LeRobotSingleDataset):
     """LeRobot dataset whose navigation action is computed from camera extrinsics.
 
@@ -408,6 +412,8 @@ class ShardedLeRobotSingleActionChunkDatasetInteriorGS(LeRobotSingleDataset):
             dtype=np.int64,
         )
         return {
+            "action_statistics_version": ACTION_STATISTICS_VERSION,
+            "action_statistics_scope": ACTION_STATISTICS_SCOPE,
             "action_delta_indices": action_offsets.tolist(),
             "action_frame_stride": self.action_frame_stride,
             "nav_action_scale": self.nav_action_scale,
@@ -420,10 +426,12 @@ class ShardedLeRobotSingleActionChunkDatasetInteriorGS(LeRobotSingleDataset):
         episode_ids = self.trajectory_ids
         if self.max_stats_episodes is not None:
             episode_ids = episode_ids[: int(self.max_stats_episodes)]
+        eligible_starts_by_episode = self._get_step_filter()
         action_offsets = np.asarray(
             self.modality_configs["action"].delta_indices,
             dtype=np.int64,
         )
+        stats_start_stride = max(self.stats_start_stride, 1)
         for episode_index in episode_ids:
             df = pd.read_parquet(self.get_parquet_path(int(episode_index)))
             length = len(df)
@@ -431,7 +439,14 @@ class ShardedLeRobotSingleActionChunkDatasetInteriorGS(LeRobotSingleDataset):
                 continue
             extrinsics = self._get_extrinsics(df)
             max_start = max(0, length - 1 - int(action_offsets.max(initial=0)))
-            for start in range(0, max_start + 1, max(self.stats_start_stride, 1)):
+            eligible_starts = np.asarray(
+                eligible_starts_by_episode.get(int(episode_index), []),
+                dtype=np.int64,
+            )
+            complete_starts = eligible_starts[
+                (eligible_starts >= 0) & (eligible_starts <= max_start)
+            ]
+            for start in complete_starts[::stats_start_stride]:
                 indices = start + action_offsets
                 values.append(
                     self._compute_navigation_actions(extrinsics, indices, length)
